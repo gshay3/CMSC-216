@@ -1,0 +1,223 @@
+# Name: Griffin Shay
+# M-number: M20912214 
+# evaluateRPN function
+# Output: %rax = result of the postfix expression
+evaluateRPN:
+		irmovq $0, %rax               # Initialize result register
+		irmovq $0, %rsi               # Initialize pointer
+
+evaluate_loop:
+		call strlen                   # Get length of expression
+		irmovq $32, %rdi              # Set %rdi to the beggining of string
+		rrmovq %rax, %rcx             # Store length in %rcx
+
+	evaluate_next_char:
+		call char_at                  # Get character at current index
+		iaddq $-223, %rdi             # Set %rdi to correct value
+		irmovq $0, %r11               # Initialize %r11
+		irmovq $0, %r8                # Initialize %r8
+		subq %r8, %rcx                # Check if end of string
+		je done_evaluation
+		
+		rrmovq %rax, %rdx             # copy ASCII value in %rax into %rdx
+		irmovq $0x20, %r8             # ASCII space character
+		subq %r8, %rdx                # Check if the character is a space
+		je skip_space                 # Skip spaces
+
+        	rrmovq %rax, %rdx             # copy ASCII value in %rax into %rdx
+		irmovq $0x30, %r8             # ASCII '0'
+		subq %r8, %rdx                # Check if it's a number
+		jg push_number                # If greater than zero, push the number
+		jl evaluate_operator          # Otherwise, it's an operator
+
+	skip_space:
+	    	iaddq $-1, %rcx               # Decrement string length
+		iaddq $1, %rsi                # Increment pointer
+		jmp evaluate_next_char        # Loop through characters in expression
+
+push_number:
+        	iaddq $-1, %rcx               # Decrement string length
+        	rrmovq %rax, %rdx             # Copy ASCII value in %rax into %rdx
+        	irmovq $0x39, %r8             # ASCII '9'
+        	subq %r8, %rdx                # Check if number is between 0-9
+        	jg evaluate_next_char         # Continue to next character
+		irmovq $0x30, %r8             # ASCII '0'
+		subq %r8, %rax                # Convert ASCII to actual number
+		pushq %rax                    # Push number onto the stack
+		iaddq $1, %rsi                # Increment pointer
+		jmp evaluate_next_char        # Continue to next character
+
+evaluate_operator:
+        	iaddq $-1, %rcx               # Decrement string length
+		popq %r9                      # Pop first operand into %r9
+		popq %r8                      # Pop second operand into %r8
+
+        	rrmovq %rax, %rdx             # copy ASCII value in %rax into %rdx
+		irmovq $0x2b, %r10            # ASCII '+'
+		subq %r10, %rdx               # Check if operator is '+'
+		je add_operands               # If so, add operands
+
+        	rrmovq %rax, %rdx             # copy ASCII value in %rax into %rdx
+		irmovq $0x2d, %r10            # ASCII '-'
+		subq %r10, %rdx               # Check if operator is '-'
+		je sub_operands               # If so, subtract operands
+
+        	rrmovq %rax, %rdx             # copy ASCII value in %rax into %rdx
+		irmovq $0x2a, %r10            # ASCII '*'
+		subq %r10, %rdx               # Check if operator is '*'
+		je mul_operands               # If so, multiply operands
+
+        	rrmovq %rax, %rdx             # copy ASCII value in %rax into %rdx
+		irmovq $0x2f, %r10            # ASCII '/'
+		subq %r10, %rdx               # Check if operator is '/'
+		je div_operands               # If so, divide operands
+		
+		rrmovq %rax, %rdx             # copy ASCII value in %rax into %rdx
+		irmovq $0x25, %r10            # ASCII '/'
+		subq %r10, %rdx               # Check if operator is '/'
+		je mod_operands               # If so, divide operands
+
+        	iaddq $1, %rsi                # Increment pointer
+		pushq %r8		      # If no operand match push %r8 back onto the stack
+		pushq %r9		      # If no operand match push %r9 back onto the stack
+		jmp evaluate_next_char        # Continue to next character
+
+add_operands:
+		addq %r9, %r8                 # Perform addition
+		pushq %r8                     # Push result back onto stack
+		iaddq $1, %rsi                # Increment pointer
+		jmp evaluate_next_char        # Continue to next character
+
+sub_operands:
+		subq %r9, %r8                 # Perform subtraction
+		pushq %r8                     # Push result back onto stack
+		iaddq $1, %rsi                # Increment pointer
+		jmp evaluate_next_char        # Continue to next character
+
+mul_operands:
+		rrmovq %r8, %r11              # Copy value in %r8 to %r11
+		iaddq $0, %r8                 # Check if %r8 = 0
+		je mul_zero                   # %r8 or %r9 = 0 so push 0
+		iaddq $0, %r9                 # Check if %r9 = 0
+		je mul_zero                   # %r8 or %r9 = 0 so push 0
+	mul_start:
+		iaddq $-1, %r9                # Decrement multiplier
+		je end_mul                    # If zero, end multiply
+		addq %r11, %r8                # multiply addition
+		jmp mul_start                 # multiply loop
+		
+	mul_zero:
+		irmovq $0, %r8                # Assign 0 to %r8
+	end_mul:
+		pushq %r8                     # Push result back onto stack
+		iaddq $1, %rsi                # Increment pointer
+		jmp evaluate_next_char        # Continue to next character
+
+div_operands:
+		iaddq $0, %r9                 # Check if %r9 = 0
+        	je zero_div                   # Skip division if division by zero
+		subq %r9, %r8                 # Division subtract
+		jl end_div                    # If less than zero, end division
+		iaddq $1, %r11                # Iterations of division
+		jmp div_operands              # division loop
+		
+	zero_div:
+		pushq %r8                     # push %r8 back onto the stack
+		jmp evaluate_next_char        # Continue to next character
+		
+	end_div:
+		pushq %r11                    # Push result back onto stack
+		iaddq $1, %rsi                # Increment pointer
+		jmp evaluate_next_char        # Continue to next character
+		
+mod_operands:
+        	iaddq $0, %r9                 # Check if %r9 = 0
+        	je end_mod                    # If zero, end modulus
+        	subq %r9, %r8                 # Modulus subtraction
+		je end_mod                    # If zero, end modulus
+		jl negative                   # If negative, restore remainder
+		jmp mod_operands              # Modulus loop
+		
+	negative:
+		addq %r9, %r8                 # Addition to restore remainder
+	end_mod:
+		pushq %r8                     # Push result back onto stack
+		iaddq $1, %rsi                # Increment pointer
+		jmp evaluate_next_char        # Continue to next character
+
+done_evaluation:
+		popq %rax                     # Pop the final result into %rax
+		halt
+
+# STRLEN function
+# Input: %rdi = char *s
+# Output: %rax = length of the string
+	
+strlen:
+		pushq %r12
+		pushq %r13
+	    irmovq $0, %rax       # Initialize counter (length) to 0
+	loop_strlen:
+	    mrmovq (%rdi), %r12    # Load word from memory address into %r12
+	    irmovq $0xFF, %r13
+	    andq   %r13, %r12     # Only keep the lowest byte (the character we're interested in)
+	    je     done_strlen           # If it is, we've reached the end of the string
+	    irmovq $1, %r13        # Prepare a value of 1
+	    addq   %r13, %rax      # Increment the counter
+	    addq   %r13, %rdi      # Move to the next character in the string
+	    jmp    loop_strlen     # Repeat for the next character
+	done_strlen:
+		popq %r13
+		popq %r12
+	    ret
+		
+		
+		
+# STRCAT function
+# Input: %rdi = char *dest, %rsi = char *src
+# Output: %rax = address of the concatenated string
+
+strcat:
+		pushq %r12
+		pushq %r13
+		pushq %r14
+	    irmovq $1, %r13      # Prepare a value of 1
+	    # First, find the end of the destination string
+	    rrmovq %rdi, %rax   # Copy address of dest to %rax
+	find_dest_end:
+	    mrmovq (%rax), %r12  # Load byte from memory address into %r12
+	    irmovq $0xFF, %r14
+	    andq %r14, %r12     # Only keep the lowest byte
+	    je append_start     # If it is, we've reached the end of dest string
+	    addq %r13, %rax      # Move to the next byte in dest string
+	    jmp find_dest_end   # Repeat for the next byte
+
+	# Now, append each character from the source string to the destination string
+	append_start:
+	    mrmovq (%rsi), %r12  # Load byte from src string into %r12
+	    irmovq $0xFF, %r14
+	    andq %r14, %r12     # Only keep the lowest byte
+	    je done_strcat             # If it is, we're done
+	    rmmovq %r12, (%rax)  # Store byte to dest string
+	    addq %r13, %rsi      # Move to the next byte in src string
+	    addq %r13, %rax      # Move to the next byte in dest string
+	    jmp append_start    # Repeat for the next byte from src string
+
+	done_strcat:
+		rrmovq %rdi, %rax
+		popq %r14
+		popq %r13
+		popq %r12
+	    ret
+
+	
+# CHAR_AT function
+# Input: %rdi = char *str, %rsi = int index
+# Output: %rax = ascii value of the character at the specified index in the string
+
+char_at:
+		addq %rsi, %rdi	# offset into the string by the index
+		mrmovq (%rdi), %rax
+		irmovq $0xff, %rdi
+		andq	%rdi, %rax
+		ret
