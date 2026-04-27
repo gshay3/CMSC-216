@@ -1,0 +1,46 @@
+#
+# trace15.txt - Putting it all together
+#
+
+/bin/echo shell> ./bogus
+./bogus
+
+/bin/echo shell> ./myspin 10
+./myspin 10
+
+SLEEP 2
+INT
+
+/bin/echo -e shell> ./myspin 3 \046
+./myspin 3 &
+
+/bin/echo -e shell> ./myspin 4 \046
+./myspin 4 &
+
+/bin/echo shell> jobs
+jobs
+
+/bin/echo shell> fg %1
+fg %1
+
+SLEEP 2
+TSTP
+
+/bin/echo shell> jobs
+jobs
+
+/bin/echo shell> bg %3
+bg %3
+
+/bin/echo shell> bg %1
+bg %1
+
+/bin/echo shell> jobs
+jobs
+
+/bin/echo shell> fg %1
+fg %1
+
+/bin/echo shell> quit
+quit
+
