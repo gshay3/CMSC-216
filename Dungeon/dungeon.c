@@ -1,3 +1,46 @@
+/*
+ * Dungeon Adventure Game
+ *
+ * Description:
+ * This program implements a text-based dungeon exploration game in C. The player
+ * navigates through a dynamically constructed graph of interconnected rooms,
+ * searching for useful items while avoiding or confronting a dragon that actively
+ * pursues them. Each room may contain an item and a list of adjacent rooms that
+ * define possible movement paths.
+ *
+ * Core Features:
+ * - Dynamic dungeon generation from standard input
+ * - Graph-based room structure with adjacency lists
+ * - Shortest-path calculations using the Floyd-Warshall algorithm to drive
+ *   enemy (dragon) movement and proximity hints ("warmer/colder" feedback)
+ * - Inventory system allowing item pickup, drop, and swapping
+ * - Health system with consequences for invalid actions
+ * - Multiple gameplay outcomes, including victory, death, and hidden ritual events
+ *
+ * Gameplay Elements:
+ * - The player explores rooms by entering adjacent room IDs
+ * - Items (e.g., sword, amulet) influence interactions and outcomes
+ * - A dragon moves intelligently toward the player each turn
+ * - Special rooms and actions can trigger unique events (e.g., ritual, transformation)
+ *
+ * Data Structures:
+ * - Room: Represents a node in the dungeon graph, containing an ID, optional item,
+ *   and a list of adjacent rooms
+ * - Map: Holds the collection of all rooms in the dungeon
+ * - Distance and path matrices for shortest-path calculations
+ *
+ * Memory Management:
+ * - Dynamic allocation is used extensively for rooms, adjacency lists, and path matrices
+ * - All allocated memory is freed before program termination
+ *
+ * Input Format:
+ * - Room definitions with adjacency lists and optional items
+ * - Player and dragon starting positions
+ *
+ * Author: Griffin Shay
+ * Date: 10/8/2024
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
