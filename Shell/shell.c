@@ -1,9 +1,14 @@
-/* 
- * shell - A tiny shell program with job control
+/*
+ * Description:
+ * A minimal Unix-like shell that executes commands in the foreground or
+ * background with basic job control. It supports built-in commands (quit,
+ * jobs, fg, bg), tracks active processes, and handles signals (SIGINT,
+ * SIGTSTP, SIGCHLD) to manage job state and execution.
  * 
- * <Put your name and login ID here>
- *  Griffin Shay cmsc216116
+ * Author: Griffin Shay
+ * Date: 11/18/2024
  */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
