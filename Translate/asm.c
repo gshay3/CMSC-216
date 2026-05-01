@@ -1,3 +1,14 @@
+/*
+ * Description:
+ * This program reads assembly-like instructions from standard input and
+ * translates them into 16-bit hexadecimal machine code. It supports a small
+ * instruction set, parses registers and immediate values, and encodes each
+ * instruction based on its format and operand types.
+ *
+ * Author: Griffin Shay
+ * Date: 9/18/2024
+ */
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -5,6 +16,7 @@
 
 #define MAX_INSTRUCTIONS 1024
 
+// Structure representing an instruction definiton.
 typedef struct 
 {
     const char *opcode;
@@ -12,6 +24,7 @@ typedef struct
     int numOperands;
 } Instruction;
 
+// Table of supported instructioons.
 Instruction Instructions[] = {
     {"ADD", 0x0, 3},
     {"SUB", 0x1, 3},
@@ -31,6 +44,7 @@ Instruction Instructions[] = {
     {"JEQ", 0xF, 1},
 };
 
+// Returns the index of the opcode in the instruction table.
 int GetOpcode(const char *opcode)
 {
     for(int i = 0; i < 16; i++)
@@ -43,6 +57,7 @@ int GetOpcode(const char *opcode)
     return -1;
 }
 
+// Parses a register string and returns its numeric value.
 int Register(const char *reg)
 {
     if(reg[0] == 'R')
@@ -58,23 +73,21 @@ int Register(const char *reg)
     return -1;
 }
 
+// Applies a bitmask to fit a value into a given number of bits.
 int TwosCompliment(int value, int bits)
 {
     int shift = (1 << bits) - 1;
     return value & shift;
 }
 
-//int IsDecimal(const char *operand)
-//{
-//    return !(operand[0] == 'R');
-    // return isdigit(operand[0]) && operand[0] != '0';
-//}
-
+// Parses and encodes a single instruction line.
 void ProcessInstructions(char *line)
 {
     char op[10];
     char operand1[10], operand2[10], operand3[10];
     int operands[3] = {0, 0, 0};
+
+    // Parse opcode and up to 3 operands.
     int lineCode = sscanf(line, "%s %s %s %s", op, operand1, operand2, operand3);
     int opcodeIndex = GetOpcode(op);
     
@@ -84,6 +97,8 @@ void ProcessInstructions(char *line)
     }
 
     Instruction inst = Instructions[opcodeIndex];
+
+    // Start building instruction (opcode in upper 4 bits).
     unsigned int instruction = inst.hex << 12;
 
     int rd = -1, rs1 = -1, rs2 = -1, imm = 0;
@@ -107,6 +122,8 @@ void ProcessInstructions(char *line)
     {
         rs2 = Register(operand3);
     }
+    
+    // Encode instruction based on opcode type. 
     if(strcmp(op, "ADD") == 0 || strcmp(op, "SUB") == 0 || 
         strcmp(op, "MUL") == 0 || strcmp(op, "DIV") == 0 || 
         strcmp(op, "AND") == 0 || strcmp(op, "ORR") == 0 ||
@@ -164,9 +181,11 @@ void ProcessInstructions(char *line)
         instruction |= 0;
     }
 
+    // Output encoded instruction in hex.
     printf("%04X", instruction);
 }
 
+// Reads input lines and processes each instruction.
 void assemble()
 {
     char line[256];
