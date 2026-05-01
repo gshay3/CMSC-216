@@ -23,7 +23,26 @@ String processing <br>
 Loops and arrays <br>
 Basic input/output (fgets, printf) <br>
  <br> <br>
-🔹 Project 2: Dungeon Game (Graph-Based Adventure)
+ 🔹 Project 2: Translate (Custom Language Interpreter)
+A program that parses and translates input from a custom high-level language into a lower-level representation.
+
+Features:
+
+Reads and interprets structured input commands <br>
+Tokenizes and parses input into meaningful components <br>
+Translates commands into an output format or intermediate representation <br>
+Handles syntax validation and error reporting <br>
+Supports multiple instruction types and control flow constructs <br>
+
+Concepts Covered:
+
+Parsing and tokenization <br>
+Interpreters and translation systems <br>
+String manipulation <br>
+Control flow and logic handling <br>
+Modular program design <br>
+ <br> <br>
+🔹 Project 3: Dungeon Game (Graph-Based Adventure)
 An interactive dungeon exploration game using graph structures and pathfinding algorithms.
 
 Features:
@@ -43,7 +62,7 @@ Shortest path algorithms <br>
 Structs and pointers <br>
 Game state management <br>
  <br> <br>
-🔹 Project 3: Reverse Polish Notation (RPN) Evaluator
+🔹 Project 4: Reverse Polish Notation (RPN) Evaluator
 A Y86-64 assembly program that evaluates postfix expressions using a stack-based approach.
 
 Features:
@@ -61,7 +80,7 @@ Stack-based computation <br>
 Low-level arithmetic operations <br>
 Function calls and memory usage <br>
  <br> <br>
-🔹 Project 4: Tiny Shell with Job Control
+🔹 Project 5: Tiny Shell with Job Control
 A Unix-style shell implemented in C that supports job control and process management.
 
 Features:
@@ -81,7 +100,7 @@ Job scheduling and management <br>
 Concurrency and synchronization <br>
 Unix/Linux systems programming <br>
  <br> <br>
-🔹 Project 5: Thread-Safe Data Structures
+🔹 Project 6: Thread-Safe Data Structures
 A multithreaded program that ensures safe concurrent access to shared data structures.
 
 Features:
@@ -98,22 +117,3 @@ Multithreading (pthreads) <br>
 Synchronization primitives (mutexes, locks) <br>
 Thread safety <br>
 Concurrent programming design <br>
- <br> <br>
-🔹 Project 6: Translate (Custom Language Interpreter)
-A program that parses and translates input from a custom high-level language into a lower-level representation.
-
-Features:
-
-Reads and interprets structured input commands <br>
-Tokenizes and parses input into meaningful components <br>
-Translates commands into an output format or intermediate representation <br>
-Handles syntax validation and error reporting <br>
-Supports multiple instruction types and control flow constructs <br>
-
-Concepts Covered:
-
-Parsing and tokenization <br>
-Interpreters and translation systems <br>
-String manipulation <br>
-Control flow and logic handling <br>
-Modular program design <br>
