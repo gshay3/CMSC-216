@@ -1,7 +1,13 @@
 /*
-* Name: Griffin Shay
-* M-number: M20912214
-*/
+ * Description:
+ * This file implements a thread-safe singly linked list using POSIX read-write
+ * locks. It provides basic operations including initialization, insertion,
+ * deletion, search, traversal, and cleanup, allowing safe concurrent access
+ * by multiple reader and writer threads.
+ * 
+ * Author: Griffin Shay
+ * Date: 12/11/2024
+ */
 
 #include "threads.h"
 #include <stdlib.h>
